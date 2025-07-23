@@ -19,7 +19,7 @@ steps:
     scriptLocation: 'inlineScript'
     inlineScript: |
       docker build -t $(acr_name).azurecr.io/webapp:$(tag) app-dotnet
-      az acr login -n $(acr_name)
+      az acr login --name nagclkcontainerregistry
       sudo docker push $(acr_name).azurecr.io/webapp:$(tag)
       
 #- task: qetza.replacetokens.replacetokens-task.replacetokens@3
