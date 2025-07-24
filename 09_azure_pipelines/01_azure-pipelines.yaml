@@ -44,7 +44,7 @@ steps:
     sources: 'app-deploy.yaml'
     addBOM: true
     tokenPattern: 'custom'
-    tokenPrefix: '{'
+    tokenPrefix: '${'
     tokenSuffix: '}'
     recursive: true
     transforms: true
