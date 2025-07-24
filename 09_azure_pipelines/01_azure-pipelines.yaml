@@ -22,20 +22,20 @@ steps:
       az acr login -n $(acr_name)
       docker push $(acr_name).azurecr.io/webapp:$(tag)
       
-- task: qetza.replacetokens.replacetokens-task.replacetokens@6
+- task: replacetokens@6
   displayName: 'Replace Image TAG'
   inputs:
     rootDirectory: '02_sample_app_yaml'
     targetFiles: 'app-deploy.yaml'
     encoding: 'auto'
-    writeBOM: true
+    addBOM: true
     actionOnMissing: 'warn'
-    keepToken: false
     tokenPrefix: '__'
     tokenSuffix: '__'
-    useLegacyPattern: false
-    enableTransforms: false
-    enableTelemetry: true
+    recursive: true
+    transforms: true
+    telemetryOptout: true
+   
 
 - script: cat 02_sample_app_yaml/app-deploy.yaml
   displayName: View app-deploy.yaml
