@@ -41,6 +41,7 @@ steps:
     root: '$(System.DefaultWorkingDirectory)/02_sample_app_yaml'
     sources: 'app-deploy.yaml'
     addBOM: true
+    additionalVariables: 'tag'
     recursive: true
     transforms: true
     telemetryOptout: true
