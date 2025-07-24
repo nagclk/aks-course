@@ -22,32 +22,6 @@ steps:
       az acr login -n $(acr_name)
       docker push $(acr_name).azurecr.io/webapp:$(tag)
       
-- task: replacetokens@6
-  displayName: 'Replace Image TAG'
-  inputs:
-    rootDirectory: '02_sample_app_yaml'
-    targetFiles: 'app-deploy.yaml'
-    encoding: 'auto'
-    addBOM: true
-    actionOnMissing: 'warn'
-    tokenPattern: 'custom'
-    tokenPrefix: '__'
-    tokenSuffix: '__'
-    recursive: true
-    transforms: true
-    telemetryOptout: true
-   
-- task: replacetokens@6
-  inputs:
-    root: '$(System.DefaultWorkingDirectory)/02_sample_app_yaml'
-    sources: 'app-deploy.yaml'
-    addBOM: true
-    tokenPattern: 'custom'
-    tokenPrefix: '{'
-    tokenSuffix: '}'
-    recursive: true
-    transforms: true
-    telemetryOptout: true
 
 
 - script: cat 02_sample_app_yaml/app-deploy.yaml
