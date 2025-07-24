@@ -43,8 +43,8 @@ steps:
     sources: 'app-deploy.yaml'
     addBOM: true
     tokenPattern: 'custom'
-    tokenPrefix: ''
-    tokenSuffix: ''
+    tokenPrefix: '{'
+    tokenSuffix: '}'
     recursive: true
     transforms: true
     telemetryOptout: true
