@@ -22,7 +22,7 @@ steps:
       az acr login -n $(acr_name)
       docker push $(acr_name).azurecr.io/webapp:$(tag)
       
-- task: qetza.replacetokens.replacetokens-task.replacetokens@3
+- task: qetza.replacetokens.replacetokens-task.replacetokens@6
   displayName: 'Replace Image TAG'
   inputs:
     rootDirectory: '02_kubernetes_aks'
