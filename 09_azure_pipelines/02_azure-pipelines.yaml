@@ -67,7 +67,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          checkov --directory 02_kubernetes_aks
+          checkov --directory 02_sample_app_yaml
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
     - task: Bash@3
@@ -97,7 +97,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          docker build -t acrforakscluster.azurecr.io/webapp:$(tag) app-dotnet
+          docker build -t nagclkcontainerregistry-h5hxg6cub6cgb2b9.azurecr.io/webapp:$(tag) app-dotnet
 
     - task: Bash@3
       displayName: Scan Container
@@ -110,50 +110,48 @@ stages:
     - task: AzureCLI@2
       displayName: Push Container to ACR
       inputs:
-        azureSubscription: 'aks-spn-ca'
+        azureSubscription: 'Nag-Azure-Connect'
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |
-          az acr login -n acrforakscluster
+          az acr login -n nagclkcontainerregistry
 
-          docker push acrforakscluster.azurecr.io/webapp:$(tag)
+          docker push nagclkcontainerregistry-h5hxg6cub6cgb2b9.azurecr.io/webapp:$(tag)
 
     - task: AzureCLI@2
       displayName: '[Optional] Build Container inside ACR'
       enabled: ${{ parameters.runCompletePipeline}}
       inputs:
-        azureSubscription: 'aks-spn-ca'
+        azureSubscription: 'Nag-Azure-Connect'
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |
-          az acr login -n acrforakscluster
+          az acr login -n nagclkcontainerregistry
 
-          az acr build -r acrforakscluster -t webapp:$(tag) app-dotnet
+          az acr build -r nagclkcontainerregistry -t webapp:$(tag) app-dotnet
 
-    - task: qetza.replacetokens.replacetokens-task.replacetokens@4
-      displayName: Replace TAG in YAML Deployment
+    - task: replacetokens@6
       inputs:
-        targetFiles: '02_kubernetes_aks/app-deploy.yaml'
-        encoding: 'auto'
-        tokenPattern: 'rm'
-        writeBOM: true
-        actionOnMissing: 'warn'
-        keepToken: false
-        actionOnNoFiles: 'continue'
-        enableTransforms: false
-        useLegacyPattern: false
-        enableTelemetry: true
+        root: '$(System.DefaultWorkingDirectory)/02_sample_app_yaml'
+        sources: 'app-deploy.yaml'
+        addBOM: true
+        tokenPattern: 'custom'
+        tokenPrefix: '${'
+        tokenSuffix: '}'
+        recursive: true
+        transforms: true
+        telemetryOptout: true
 
     - task: Bash@3
       displayName: Verify TAG Updated
       inputs:
         targetType: 'inline'
-        script: 'cat 02_kubernetes_aks/app-deploy.yaml'
+        script: 'cat 02_sample_app_yaml/app-deploy.yaml'
 
     - task: PublishBuildArtifacts@1
       displayName: Upload YAML manifest
       inputs:
-        PathtoPublish: '02_kubernetes_aks'
+        PathtoPublish: '02_sample_app_yaml'
         ArtifactName: 'drop\manifest'
         publishLocation: 'Container'
 
@@ -186,9 +184,9 @@ stages:
       displayName: Deploy YAML Manifest
       inputs:
         connectionType: 'Azure Resource Manager'
-        azureSubscriptionEndpoint: 'aks-spn-ca'
-        azureResourceGroup: 'rg-aks-cluster'
-        kubernetesCluster: 'aks-cluster'
+        azureSubscriptionEndpoint: 'Nag-Azure-Connect'
+        azureResourceGroup: 'myResourceGroup'
+        kubernetesCluster: 'MY_AKS_CLUSTER_NAME'
         namespace: 'default'
         command: 'apply'
         useConfigurationFile: true
@@ -231,9 +229,9 @@ stages:
       displayName: Deploy Helm Chart
       inputs:
         connectionType: 'Azure Resource Manager'
-        azureSubscription: 'aks-spn-ca'
-        azureResourceGroup: 'rg-aks-cluster'
-        kubernetesCluster: 'aks-cluster'
+        azureSubscription: 'Nag-Azure-Connect'
+        azureResourceGroup: 'myResourceGroup'
+        kubernetesCluster: 'MY_AKS_CLUSTER_NAME'
         namespace: 'qa'
         command: 'upgrade'
         chartType: 'FilePath'
@@ -268,7 +266,7 @@ stages:
       timeoutInMinutes: 1 # 1440 # task times out in 1 day
       enabled: ${{ parameters.runCompletePipeline}}
       inputs:
-        notifyUsers: 'someone@example.com'
+        notifyUsers: 'nagclk@gmail.com'
         instructions: |
           Please validate the build configuration and resume
           Tag: $(tag)
@@ -293,12 +291,12 @@ stages:
     - task: AzureCLI@2
       displayName: 'Deploy Helm Chart'
       inputs:
-        azureSubscription: 'aks-spn-ca'
+        azureSubscription: 'Nag-Azure-Connect'
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         workingDirectory: '$(System.ArtifactsDirectory)/drop/helm_chart'
         inlineScript: |
-          az aks get-credentials --resource-group rg-aks-cluster --name aks-cluster
+          az aks get-credentials --resource-group myResourceGroup --name MY_AKS_CLUSTER_NAME
 
           kubectl cluster-info
 
@@ -317,30 +315,30 @@ stages:
         targetType: 'inline'
         script: 'echo Run Integration Tests..'
         
-    - task: AzureCLI@2
-      displayName: 'Scan Cluster Config'
-      # enabled: ${{ parameters.runCompletePipeline}}
-      inputs:
-        azureSubscription: 'aks-spn-ca'
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          az aks get-credentials --resource-group rg-aks-cluster --name aks-cluster
-          kubectl cluster-info
+    #- task: AzureCLI@2
+    #  displayName: 'Scan Cluster Config'
+     # # enabled: ${{ parameters.runCompletePipeline}}
+      #inputs:
+       # azureSubscription: 'Nag-Azure-Connect'
+        #scriptType: 'bash'
+        #scriptLocation: 'inlineScript'
+        #inlineScript: |
+         # az aks get-credentials --resource-group myResourceGroup --name MY_AKS_CLUSTER_NAME
+          #kubectl cluster-info
 
           # Deploy job.yaml to scan Kubernetes config and job-aks.yaml to scan specific AKS config
-          kubectl apply -f https://raw.githubusercontent.com/aquasecurity/kube-bench/main/job.yaml
-          sleep 10s # Waits 10 seconds.
+          #kubectl apply -f https://raw.githubusercontent.com/aquasecurity/kube-bench/main/job.yaml
+          #sleep 10s # Waits 10 seconds.
           # Pod logs outputs Kubernetes scan results and Job outputs AKS specific results
-          POD=$(kubectl get pods --selector app=kube-bench -o name)
-          kubectl logs $POD
-          kubectl delete -f https://raw.githubusercontent.com/aquasecurity/kube-bench/main/job.yaml
+          #POD=$(kubectl get pods --selector app=kube-bench -o name)
+          #kubectl logs $POD
+          #kubectl delete -f https://raw.githubusercontent.com/aquasecurity/kube-bench/main/job.yaml
           
-          sleep 10s
+          #sleep 10s
           
-          kubectl apply -f https://raw.githubusercontent.com/aquasecurity/kube-bench/main/job-aks.yaml
-          sleep 10s
-          JOB=$(kubectl get jobs --selector job-name=kube-bench -o name)
-          kubectl logs $JOB
+          #kubectl apply -f https://raw.githubusercontent.com/aquasecurity/kube-bench/main/job-aks.yaml
+          #sleep 10s
+          #JOB=$(kubectl get jobs --selector job-name=kube-bench -o name)
+          #kubectl logs $JOB
           # TODO upload the scan results
-          kubectl delete -f https://raw.githubusercontent.com/aquasecurity/kube-bench/main/job-aks.yaml
+         # kubectl delete -f https://raw.githubusercontent.com/aquasecurity/kube-bench/main/job-aks.yaml
