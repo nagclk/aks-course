@@ -6,7 +6,8 @@ pool:
 
 variables:
   acr_name: nagclkcontainerregistry-h5hxg6cub6cgb2b9
-  tag: 1.0.0-$(Build.BuildId)
+  #tag: 1.0.0-$(Build.BuildId)
+  tag: xxxxx
   
 
 steps:
