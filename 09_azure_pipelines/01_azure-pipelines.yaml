@@ -37,7 +37,7 @@ steps:
     #enableTransforms: false
     #enableTelemetry: true
 
-- script: cat 02_kubernetes_aks/app-deploy.yaml
+- script: cat 02_sample_app_yaml/app-deploy.yaml
   displayName: View app-deploy.yaml
 
 - task: Kubernetes@1
@@ -45,11 +45,11 @@ steps:
   inputs:
     connectionType: 'Azure Resource Manager'
     azureSubscriptionEndpoint: 'Nag-Azure-Connect'
-    azureResourceGroup: 'MY_RESOURCE_GROUP_NAME'
+    azureResourceGroup: 'myResourceGroup'
     kubernetesCluster: 'MY_AKS_CLUSTER_NAME'
     namespace: 'default'
     command: 'apply'
     useConfigurationFile: true
-    configuration: '02_kubernetes_aks'
+    configuration: '02_sample_app_yaml'
     secretType: 'dockerRegistry'
     containerRegistryType: 'Azure Container Registry'
