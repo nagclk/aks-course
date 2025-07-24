@@ -30,6 +30,7 @@ steps:
     encoding: 'auto'
     addBOM: true
     actionOnMissing: 'warn'
+    tokenPattern: 'custom'
     tokenPrefix: '__'
     tokenSuffix: '__'
     recursive: true
@@ -41,7 +42,7 @@ steps:
     root: '$(System.DefaultWorkingDirectory)/02_sample_app_yaml'
     sources: 'app-deploy.yaml'
     addBOM: true
-    #tokenPattern: 'custom'
+    tokenPattern: 'custom'
     #tokenPrefix: ''
     #tokenSuffix: ''
     recursive: true
