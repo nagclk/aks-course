@@ -17,10 +17,10 @@ spec:
         # image: __acr_name__.azurecr.io/webapp:tag
         # image: acraks013579.azurecr.io/dotnet-app:1.0.0
         
-        #image: nagclkcontainerregistry-h5hxg6cub6cgb2b9.azurecr.io/webapp:${tag}
+        image: nagclkcontainerregistry-h5hxg6cub6cgb2b9.azurecr.io/webapp:${tag}
         #image: nagclkcontainerregistry-h5hxg6cub6cgb2b9.azurecr.io/webapp:${__tag__}
         #image: nagclkcontainerregistry-h5hxg6cub6cgb2b9.azurecr.io/webapp:$__tag__
-        image: nagclkcontainerregistry-h5hxg6cub6cgb2b9.azurecr.io/webapp:tag
+        #image: nagclkcontainerregistry-h5hxg6cub6cgb2b9.azurecr.io/webapp:tag
         # image: ACR_NAME/DOCKER_IMAGE:tag
         # image: __ACR_NAME__.azurecr.io/__DOCKER_IMAGE__:__TAG__
         ports:
