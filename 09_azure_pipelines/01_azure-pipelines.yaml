@@ -12,6 +12,9 @@ variables:
 
 steps:
 
+- script: cat 02_sample_app_yaml/app-deploy.yaml
+- script: ls $(System.DefaultWorkingDirectory)
+- script: dir $(System.DefaultWorkingDirectory)
 - task: AzureCLI@2
   displayName: Docker Build & Push
   inputs:
@@ -51,9 +54,7 @@ steps:
     telemetryOptout: true
 
 
-- script: cat 02_sample_app_yaml/app-deploy.yaml
-- script: ls $(System.DefaultWorkingDirectory)
-- script: dir $(System.DefaultWorkingDirectory)
+
     
   displayName: View app-deploy.yaml
 
