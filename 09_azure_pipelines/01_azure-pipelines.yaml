@@ -52,6 +52,9 @@ steps:
 
 
 - script: cat 02_sample_app_yaml/app-deploy.yaml
+- script: ls $(System.DefaultWorkingDirectory)
+- script: dir $(System.DefaultWorkingDirectory)
+    
   displayName: View app-deploy.yaml
 
 - task: Kubernetes@1
